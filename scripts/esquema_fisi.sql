@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `reserva` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `reserva`;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: reserva
@@ -24,85 +26,156 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'b0375c9c-11d4-11f1-9ce4-00d861077f4b:1-60';
 
 --
--- Dumping data for table `cardapio`
+-- Table structure for table `cardapio`
 --
 
-LOCK TABLES `cardapio` WRITE;
-/*!40000 ALTER TABLE `cardapio` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cardapio` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `cardapio`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cardapio` (
+  `Disponibilidade` varchar(10) DEFAULT NULL,
+  `Preco` decimal(10,2) DEFAULT NULL,
+  `Descricao` varchar(80) DEFAULT NULL,
+  `Nome_Prato` varchar(20) NOT NULL,
+  `CNPJ` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`Nome_Prato`),
+  KEY `CNPJ` (`CNPJ`),
+  CONSTRAINT `cardapio_ibfk_1` FOREIGN KEY (`CNPJ`) REFERENCES `restaurante` (`CNPJ`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cliente`
+-- Table structure for table `cliente`
 --
 
-LOCK TABLES `cliente` WRITE;
-/*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `cliente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cliente` (
+  `Nome_Clien` varchar(40) DEFAULT NULL,
+  `CPF` varchar(15) NOT NULL,
+  `Email` varchar(45) DEFAULT NULL,
+  `Numero` int DEFAULT NULL,
+  `Logradouro` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`CPF`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `contem`
+-- Table structure for table `contem`
 --
 
-LOCK TABLES `contem` WRITE;
-/*!40000 ALTER TABLE `contem` DISABLE KEYS */;
-/*!40000 ALTER TABLE `contem` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `contem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `contem` (
+  `Preco_pedido` decimal(10,2) DEFAULT NULL,
+  `Nome_Prato` varchar(20) DEFAULT NULL,
+  KEY `Nome_Prato` (`Nome_Prato`),
+  CONSTRAINT `contem_ibfk_1` FOREIGN KEY (`Nome_Prato`) REFERENCES `cardapio` (`Nome_Prato`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `entregador`
+-- Table structure for table `entregador`
 --
 
-LOCK TABLES `entregador` WRITE;
-/*!40000 ALTER TABLE `entregador` DISABLE KEYS */;
-/*!40000 ALTER TABLE `entregador` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `entregador`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `entregador` (
+  `Nome` varchar(40) DEFAULT NULL,
+  `CPF_Entreg` varchar(15) NOT NULL,
+  `Placa` varchar(10) DEFAULT NULL,
+  `Cor` varchar(10) DEFAULT NULL,
+  `CNPJ` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`CPF_Entreg`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fazer`
+-- Table structure for table `fazer`
 --
 
-LOCK TABLES `fazer` WRITE;
-/*!40000 ALTER TABLE `fazer` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fazer` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `fazer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fazer` (
+  `CPF` varchar(15) DEFAULT NULL,
+  KEY `CPF` (`CPF`),
+  CONSTRAINT `fazer_ibfk_1` FOREIGN KEY (`CPF`) REFERENCES `cliente` (`CPF`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `pedido`
+-- Table structure for table `pedido`
 --
 
-LOCK TABLES `pedido` WRITE;
-/*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
-/*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `pedido`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedido` (
+  `Status` varchar(12) DEFAULT NULL,
+  `Hora` varchar(10) DEFAULT NULL,
+  `Data` varchar(10) DEFAULT NULL,
+  `Valor_total` decimal(10,2) DEFAULT NULL,
+  `CNPJ` varchar(15) DEFAULT NULL,
+  `CPF_Entreg` varchar(15) DEFAULT NULL,
+  KEY `CNPJ` (`CNPJ`),
+  KEY `CPF_Entreg` (`CPF_Entreg`),
+  CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`CNPJ`) REFERENCES `restaurante` (`CNPJ`),
+  CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`CPF_Entreg`) REFERENCES `entregador` (`CPF_Entreg`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `restaurante`
+-- Table structure for table `restaurante`
 --
 
-LOCK TABLES `restaurante` WRITE;
-/*!40000 ALTER TABLE `restaurante` DISABLE KEYS */;
-/*!40000 ALTER TABLE `restaurante` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `restaurante`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `restaurante` (
+  `Nome_Rest` varchar(20) DEFAULT NULL,
+  `CNPJ` varchar(15) NOT NULL,
+  `Tipo_cozinha` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`CNPJ`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `telefone_clien`
+-- Table structure for table `telefone_clien`
 --
 
-LOCK TABLES `telefone_clien` WRITE;
-/*!40000 ALTER TABLE `telefone_clien` DISABLE KEYS */;
-/*!40000 ALTER TABLE `telefone_clien` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `telefone_clien`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `telefone_clien` (
+  `Telefone_PK` int NOT NULL,
+  `Telefone` int DEFAULT NULL,
+  `CPF_FK` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`Telefone_PK`),
+  KEY `CPF_FK` (`CPF_FK`),
+  CONSTRAINT `telefone_clien_ibfk_1` FOREIGN KEY (`CPF_FK`) REFERENCES `cliente` (`CPF`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `telefone_entreg`
+-- Table structure for table `telefone_entreg`
 --
 
-LOCK TABLES `telefone_entreg` WRITE;
-/*!40000 ALTER TABLE `telefone_entreg` DISABLE KEYS */;
-/*!40000 ALTER TABLE `telefone_entreg` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `telefone_entreg`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `telefone_entreg` (
+  `Telefone_PK` int NOT NULL,
+  `Telefone` int DEFAULT NULL,
+  `CPF_Entreg_FK` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`Telefone_PK`),
+  KEY `CPF_Entreg_FK` (`CPF_Entreg_FK`),
+  CONSTRAINT `telefone_entreg_ibfk_1` FOREIGN KEY (`CPF_Entreg_FK`) REFERENCES `entregador` (`CPF_Entreg`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -114,4 +187,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-08 23:13:18
+-- Dump completed on 2026-09-08 23:38:58
